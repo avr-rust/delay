@@ -2,7 +2,7 @@
 /// This library is intended to provide a busy-wait delay
 /// similar to the one provided by the arduino c++ utilities
 /// If you need accurate time keeping you should consider a
-/// timer.
+/// hardware timer.
 
 #![feature(asm)]
 
