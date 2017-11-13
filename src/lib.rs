@@ -1,5 +1,8 @@
 #![feature(asm)]
 
+#![no_std]
+#![no_main]
+
 #![crate_name = "avr_delay"]
 
 /// This library is intended to provide a busy-wait delay
