@@ -23,7 +23,7 @@
 const MCU_SPEED: i32 = 16000000;
 
 /// Internal function to implement a variable busy-wait loop.
-/// # Arguements
+/// # Arguments
 /// * 'count' - an i32, the number of times to cycle the loop.
 fn _delay(count: i32) {
     for _ in 0..count {
@@ -32,9 +32,18 @@ fn _delay(count: i32) {
     }
 }
 
+///delay for N miliseconds
+/// # Arguments
+/// * 'ms' - an i32, number of milliseconds to busy-wait
 pub fn delay_ms(ms: i32) {
-    let lpms = MCU_SPEED / 20000;
-    let dly_cnt = lpms * ms;
+    // Ain't nothin' better than magic numbers!
+    let dly_cnt = ms * MCU_SPEED / 20000;
+    _delay(dly_cnt);
+}
+
+pub fn delay_us(us: i32) {
+    // Ain't nothin' better than magic numbers!
+    let dly_cnt = us * MCU_SPEED / 20000000;
     _delay(dly_cnt);
 }
 
