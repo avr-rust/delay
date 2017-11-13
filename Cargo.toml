@@ -1,0 +1,6 @@
+[package]
+name = "avr-delay"
+version = "0.1.0"
+authors = ["John Jorgensen <jjorgensen@hsdp.io>"]
+
+[dependencies]
