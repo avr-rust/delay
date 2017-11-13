@@ -37,13 +37,7 @@ fn _delay(count: i32) {
 /// * 'ms' - an i32, number of milliseconds to busy-wait
 pub fn delay_ms(ms: i32) {
     // Ain't nothin' better than magic numbers!
-    let dly_cnt = ms * MCU_SPEED / 20000;
-    _delay(dly_cnt);
-}
-
-pub fn delay_us(us: i32) {
-    // Ain't nothin' better than magic numbers!
-    let dly_cnt = us * MCU_SPEED / 20000000;
+    let dly_cnt = MCU_SPEED / 20000 * ms;
     _delay(dly_cnt);
 }
 
