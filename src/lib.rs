@@ -1,7 +1,6 @@
 #![feature(asm)]
 
 #![no_std]
-#![no_main]
 
 #![crate_name = "avr_delay"]
 
@@ -11,34 +10,66 @@
 /// hardware timer.
 
 // This library does all of the busy-wait loop in rust.
-// The accuracy of time passed is highly dependent on the output
-// of llvm.
+// We pack as much of the looping as possible into asm!
+// so that we can count cycles.
 //
-// The arduino library takes the approach of packing a lot of the
-// loop cycles into asm, where clocks can be counted, and the
-// outer loops add less to the inaccuracy.
+// Ignoring the overhead, which may be significant:
+// An arduino runs at 16MHZ. Each asm loop is 4 cycles.
+// so each loop is 0.25 us.
+//
+// the overhead of delay() seems to be about 13 cycles
+// initially, and then 11 cycles per outer loop. We ignore
+// all that.
 
 // This is probably not the right way to handle CPU speed.
 // Arduino runs at 16MHZ
-const MCU_SPEED: i32 = 16000000;
+const MCU_SPEED: u32 = 16000000;
 
 /// Internal function to implement a variable busy-wait loop.
 /// # Arguments
 /// * 'count' - an i32, the number of times to cycle the loop.
-fn _delay(count: i32) {
-    for _ in 0..count {
-        // needed to keep the loop from being optimized away
-        unsafe {asm!("" :::: "volatile")}
+pub fn delay(count: u32) {
+    // Our asm busy-wait takes a 16 bit word as an argument,
+    // so the max number of loops is 2^16
+    let outer_count = count / 65536;
+    let last_count = ((count % 65536)+1) as u16;
+    for _ in 0..outer_count {
+        // Each loop through should be 4 cycles.
+        unsafe {asm!("1: sbiw $0,1
+                      brne 1b"
+                     :
+                     : "w" (0)
+                     :
+                     :)}
     }
+    unsafe {asm!("1: sbiw $0,1
+                      brne 1b"
+                 :
+                 : "w" (last_count)
+                 :
+                 :)}
+
+    
 }
 
 ///delay for N miliseconds
 /// # Arguments
-/// * 'ms' - an i32, number of milliseconds to busy-wait
-pub fn delay_ms(ms: i32) {
-    // Ain't nothin' better than magic numbers!
-    let dly_cnt = MCU_SPEED / 15000 * ms;
-    _delay(dly_cnt);
+/// * 'ms' - an u32, number of milliseconds to busy-wait
+pub fn delay_ms(ms: u32) {
+    // microseconds
+    let us = ms * 1000;
+    delay_us(us);
+}
+
+///delay for N microseconds
+/// # Arguments
+/// * 'ms' - an u32, number of microseconds to busy-wait
+pub fn delay_us(us: u32) {
+    // picoseconds
+    let ps = us * 1000;
+    let ps_lp = 1000000000 / (MCU_SPEED / 4);
+    let loops = (ps / ps_lp) as u32;
+    delay(loops);
 }
 
 #[cfg(test)]
