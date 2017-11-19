@@ -3,20 +3,20 @@
 The intent of this library is to provide avr specific delay routines similar to the ones provided by the arduino library. The public functions are:
 
 ```rust
-delay(count: i32)
+delay(count: u32)
 ```
     
 is a raw delay loop. Each loop is 4 cycles. The asm section can loop 65536 times. Initial overhead is about 13 cycles. Each outer loop has an overhead of about 11 cycles.
 
 ```rust
-delay_us(us: i32)
+delay_us(us: u32)
 ```
 
 delay _us_ microseconds
 
 ```rust
-delay_ms(ms:i32)
-````
+delay_ms(ms: u32)
+```
 
 delay _ms_ milliseconds
 
@@ -33,7 +33,7 @@ Cargo.toml:
     [dependencies]
     arduino = "0.1"
     avr_delay = { git = "https://github.com/pusherofbrooms/avr-delay" }
-````
+```
 
 and your main.rs:
 
