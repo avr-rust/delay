@@ -1,6 +1,18 @@
 # avr-delay
 
-The intent of this library is to provide avr specific delay routines similar to the ones provided by the arduino library. 
+The intent of this library is to provide avr specific delay routines similar to the ones provided by the arduino library. The public functions are:
+
+    delay(count: i32)
+    
+is a raw delay loop. Each loop is 4 cycles. The asm section can loop 65536 times. Initial overhead is about 13 cycles. Each outer loop has an overhead of about 11 cycles.
+
+    delay_us(us: i32)
+
+delay _us_ microseconds
+
+    delay_ms(ms:i32)
+
+delay _ms_ milliseconds
 
 A simple example of how to use it follows.
 
@@ -53,3 +65,4 @@ and your main.rs:
         }
     }
 
+No attempt is made to handle arithmetic overruns. You'll need to do some math yourself if you see funny behavior.
