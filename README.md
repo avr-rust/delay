@@ -65,4 +65,4 @@ and your main.rs:
         }
     }
 
-No attempt is made to handle arithmetic overruns. You'll need to do some math yourself if you see funny behavior.
+No attempt is made to handle arithmetic overruns.
