@@ -9,7 +9,7 @@ Cargo.toml:
     [package]
     name = "dlyblink"
     version = "0.1.0"
-    authors = ["John Jorgensen <john@2gn.com>"]
+    authors = ["John Jorgensen"]
 
     [dependencies]
     arduino = "0.1"
