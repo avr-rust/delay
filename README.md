@@ -32,7 +32,7 @@ Cargo.toml:
 
     [dependencies]
     arduino = "0.1"
-    avr_delay = { git = "https://github.com/pusherofbrooms/avr-delay" }
+    avr_delay = { git = "https://github.com/avr-rust/delay" }
 ```
 
 and your main.rs:
