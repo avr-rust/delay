@@ -3,4 +3,10 @@ name = "avr_delay"
 version = "0.2.0"
 authors = ["John Jorgensen <jjorgensen@hsdp.io>"]
 
+description = "A crate for AVR providing software-based delay functions"
+repository = "https://github.com/avr-rust/delay"
+documentation = "https://docs.rs/avr_delay"
+license = "MIT/Apache-2.0"
+categories = ["embedded", "no-std", "hardware-support"]
+
 [dependencies]
