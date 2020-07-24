@@ -1,11 +1,16 @@
 # avr-delay
 
+
+[![Crates.io](https://img.shields.io/crates/v/avr_delay.svg)](https://crates.io/crates/avr_delay)
+
+[API Documentation](https://docs.rs/avr_delay/)
+
 The intent of this library is to provide avr specific delay routines similar to the ones provided by the arduino library. The public functions are:
 
 ```rust
 delay(count: u32)
 ```
-    
+
 is a raw delay loop. Each loop is 4 cycles. The asm section can loop 65536 times. Initial overhead is about 13 cycles. Each outer loop has an overhead of about 11 cycles.
 
 ```rust
