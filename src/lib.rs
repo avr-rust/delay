@@ -1,4 +1,4 @@
-#![feature(asm)]
+#![feature(llvm_asm)]
 
 #![no_std]
 
@@ -35,21 +35,19 @@ pub fn delay(count: u32) {
     let last_count = ((count % 65536)+1) as u16;
     for _ in 0..outer_count {
         // Each loop through should be 4 cycles.
-        unsafe {asm!("1: sbiw $0,1
+        unsafe {llvm_asm!("1: sbiw $0,1
                       brne 1b"
                      :
                      : "w" (0)
                      :
                      :)}
     }
-    unsafe {asm!("1: sbiw $0,1
+    unsafe {llvm_asm!("1: sbiw $0,1
                       brne 1b"
                  :
                  : "w" (last_count)
                  :
                  :)}
-
-    
 }
 
 ///delay for N miliseconds
