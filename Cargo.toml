@@ -2,6 +2,7 @@
 name = "avr_delay"
 version = "0.2.0"
 authors = ["John Jorgensen <jjorgensen@hsdp.io>"]
+edition = "2018"
 
 description = "A crate for AVR providing software-based delay functions"
 repository = "https://github.com/avr-rust/delay"
