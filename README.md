@@ -7,6 +7,8 @@
 
 The intent of this library is to provide avr specific delay routines similar to the ones provided by the arduino library. The public functions are:
 
+**NOTE**: This library currently hardcodes the microcontroller frequency to 16MHz. This will not always be correct. See [avr-rust/delay#2](https://github.com/avr-rust/delay/issues/2) for more details.
+
 ```rust
 delay(count: u32)
 ```
