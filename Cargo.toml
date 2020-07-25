@@ -11,3 +11,4 @@ license = "MIT/Apache-2.0"
 categories = ["embedded", "no-std", "hardware-support"]
 
 [dependencies]
+avr-config = "1.0"
