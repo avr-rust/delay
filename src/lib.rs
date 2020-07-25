@@ -21,10 +21,6 @@
 // initially, and then 11 cycles per outer loop. We ignore
 // all that.
 
-// This is probably not the right way to handle CPU speed.
-// Arduino runs at 16MHZ
-const MCU_SPEED: u32 = 16000000;
-
 /// Internal function to implement a variable busy-wait loop.
 /// # Arguments
 /// * 'count' - an i32, the number of times to cycle the loop.
@@ -65,7 +61,7 @@ pub fn delay_ms(ms: u32) {
 pub fn delay_us(us: u32) {
     // picoseconds
     let ps = us * 1000;
-    let ps_lp = 1000000000 / (MCU_SPEED / 4);
+    let ps_lp = 1000000000 / (avr_config::CPU_FREQUENCY_HZ / 4);
     let loops = (ps / ps_lp) as u32;
     delay(loops);
 }
