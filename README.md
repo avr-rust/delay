@@ -7,7 +7,16 @@
 
 The intent of this library is to provide avr specific delay routines similar to the ones provided by the arduino library. The public functions are:
 
-**NOTE**: This library currently hardcodes the microcontroller frequency to 16MHz. This will not always be correct. See [avr-rust/delay#2](https://github.com/avr-rust/delay/issues/2) for more details.
+## `$AVR_CPU_FREQUENCY_HZ`
+
+This crate uses the [`avr-config`](https://crates.io/crates/avr-config) crate for fetching the CPU frequency. As such, the `AVR_CPU_FREQUENCY_HZ` environment variable will need to be set when compiling your crate for AVR.
+
+Example:
+
+```bash
+export AVR_CPU_FREQUENCY_HZ=16000000
+cargo build -Z build-std=core --target avr-atmega328p.json --release
+```
 
 ```rust
 delay(count: u32)
