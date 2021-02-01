@@ -12,3 +12,6 @@ categories = ["embedded", "no-std", "hardware-support"]
 
 [dependencies]
 avr-config = "1.0"
+
+[dev-dependencies]
+avr-std-stub = "1.0" # for examples
