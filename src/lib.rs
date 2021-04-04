@@ -59,10 +59,10 @@ pub fn delay_ms(ms: u32) {
 /// # Arguments
 /// * 'ms' - an u32, number of microseconds to busy-wait
 pub fn delay_us(us: u32) {
-    // picoseconds
-    let ps = us * 1000;
-    let ps_lp = 1000000000 / (avr_config::CPU_FREQUENCY_HZ / 4);
-    let loops = (ps / ps_lp) as u32;
+    // nanoseconds
+    let ns = us * 1000;
+    let ns_lp = 1000000000 / (avr_config::CPU_FREQUENCY_HZ / 4);
+    let loops = (ns / ns_lp) as u32;
     delay(loops);
 }
 
