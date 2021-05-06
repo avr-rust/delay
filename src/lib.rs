@@ -24,6 +24,7 @@
 /// Internal function to implement a variable busy-wait loop.
 /// # Arguments
 /// * 'count' - an i32, the number of times to cycle the loop.
+#[inline(always)]
 pub fn delay(count: u32) {
     // Our asm busy-wait takes a 16 bit word as an argument,
     // so the max number of loops is 2^16
@@ -49,6 +50,7 @@ pub fn delay(count: u32) {
 ///delay for N miliseconds
 /// # Arguments
 /// * 'ms' - an u32, number of milliseconds to busy-wait
+#[inline(always)]
 pub fn delay_ms(ms: u32) {
     // microseconds
     let us = ms * 1000;
@@ -58,6 +60,7 @@ pub fn delay_ms(ms: u32) {
 ///delay for N microseconds
 /// # Arguments
 /// * 'ms' - an u32, number of microseconds to busy-wait
+#[inline(always)]
 pub fn delay_us(us: u32) {
     // picoseconds
     let ps = us * 1000;
