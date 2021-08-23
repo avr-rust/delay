@@ -46,7 +46,7 @@ pub fn delay(count: u32) {
                  :)}
 }
 
-///delay for N miliseconds
+///delay for N milliseconds
 /// # Arguments
 /// * 'ms' - an u32, number of milliseconds to busy-wait
 pub fn delay_ms(ms: u32) {
@@ -57,12 +57,10 @@ pub fn delay_ms(ms: u32) {
 
 ///delay for N microseconds
 /// # Arguments
-/// * 'ms' - an u32, number of microseconds to busy-wait
+/// * 'us' - an u32, number of microseconds to busy-wait
 pub fn delay_us(us: u32) {
-    // picoseconds
-    let ps = us * 1000;
-    let ps_lp = 1000000000 / (avr_config::CPU_FREQUENCY_HZ / 4);
-    let loops = (ps / ps_lp) as u32;
+    let us_lp = avr_config::CPU_FREQUENCY_HZ / 1000000 / 4;
+    let loops = (us * us_lp) as u32;
     delay(loops);
 }
 
