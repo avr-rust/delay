@@ -23,8 +23,8 @@
 
 /// Internal function to implement a variable busy-wait loop.
 /// # Arguments
-/// * 'count' - an i32, the number of times to cycle the loop.
-pub fn delay(count: u32) {
+/// * 'count' - a u64, the number of times to cycle the loop.
+pub fn delay(count: u64) {
     // Our asm busy-wait takes a 16 bit word as an argument,
     // so the max number of loops is 2^16
     let outer_count = count / 65536;
@@ -48,8 +48,8 @@ pub fn delay(count: u32) {
 
 ///delay for N milliseconds
 /// # Arguments
-/// * 'ms' - an u32, number of milliseconds to busy-wait
-pub fn delay_ms(ms: u32) {
+/// * 'ms' - a u64, number of milliseconds to busy-wait
+pub fn delay_ms(ms: u64) {
     // microseconds
     let us = ms * 1000;
     delay_us(us);
@@ -57,10 +57,10 @@ pub fn delay_ms(ms: u32) {
 
 ///delay for N microseconds
 /// # Arguments
-/// * 'us' - an u32, number of microseconds to busy-wait
-pub fn delay_us(us: u32) {
-    let us_lp = avr_config::CPU_FREQUENCY_HZ / 1000000 / 4;
-    let loops = (us * us_lp) as u32;
+/// * 'us' - a u64, number of microseconds to busy-wait
+pub fn delay_us(us: u64) {
+    let us_in_loop = (avr_config::CPU_FREQUENCY_HZ / 1000000 / 4) as u64;
+    let loops = us * us_in_loop;
     delay(loops);
 }
 
