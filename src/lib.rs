@@ -1,8 +1,10 @@
-#![feature(llvm_asm)]
+#![feature(asm_experimental_arch)]
 
 #![no_std]
 
 #![crate_name = "avr_delay"]
+
+use core::arch::asm;
 
 /// This library is intended to provide a busy-wait delay
 /// similar to the one provided by the arduino c++ utilities
@@ -31,19 +33,20 @@ pub fn delay(count: u32) {
     let last_count = ((count % 65536)+1) as u16;
     for _ in 0..outer_count {
         // Each loop through should be 4 cycles.
-        unsafe {llvm_asm!("1: sbiw $0,1
-                      brne 1b"
-                     :
-                     : "w" (0)
-                     :
-                     :)}
+        let zero = 0u16;
+        unsafe {
+            asm!("1: sbiw {i}, 1",
+                 "brne 1b",
+                 i = inout(reg_iw) zero => _,
+            )
+        }
     }
-    unsafe {llvm_asm!("1: sbiw $0,1
-                      brne 1b"
-                 :
-                 : "w" (last_count)
-                 :
-                 :)}
+    unsafe {
+        asm!("1: sbiw {i}, 1",
+             "brne 1b",
+             i = inout(reg_iw) last_count => _,
+        )
+    }
 }
 
 ///delay for N miliseconds
