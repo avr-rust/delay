@@ -1,3 +1,6 @@
+#[allow(unused_imports)]
+use core::arch::asm;
+
 /// Internal function to implement a variable busy-wait loop.
 /// # Arguments
 /// * 'count' - a u32, the number of times to cycle the loop (4 clock cycles per loop).

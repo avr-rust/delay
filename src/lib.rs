@@ -1,9 +1,6 @@
 #![no_std]
 #![crate_name = "avr_delay"]
-
 #![feature(asm_experimental_arch)]
-#[allow(unused_imports)]
-use core::arch::asm;
 
 mod delay_impl;
 
