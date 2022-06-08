@@ -50,7 +50,7 @@ pub fn delay(count: u32) {
     }
 }
 
-///delay for N miliseconds
+///delay for N milliseconds
 /// # Arguments
 /// * 'ms' - an u32, number of milliseconds to busy-wait
 #[inline(always)]
@@ -62,7 +62,7 @@ pub fn delay_ms(ms: u32) {
 
 ///delay for N microseconds
 /// # Arguments
-/// * 'ms' - an u32, number of microseconds to busy-wait
+/// * 'us' - an u32, number of microseconds to busy-wait
 #[inline(always)]
 pub fn delay_us(us: u32) {
     // picoseconds
