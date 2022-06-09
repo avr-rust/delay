@@ -22,7 +22,7 @@ pub fn delay(count: u32) {
     delay_impl::delay_count_32(count);
 }
 
-///delay for N miliseconds
+///delay for N milliseconds
 /// # Arguments
 /// * 'ms' - a u32, number of milliseconds to busy-wait. This should be known at
 /// compile time, otherwise the delay may be much longer than specified.

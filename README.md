@@ -93,3 +93,15 @@ pub mod std {
 ```
 
 No attempt is made to handle arithmetic overruns.
+
+
+### Internal notes
+
+#### Cargo publish
+
+During `cargo publish` there could be
+```text
+error: ran out of registers during register allocation
+```
+With that _blocking issue_ is adding `--no-verify` considered
+the _lesser evil_ as not releasing.
