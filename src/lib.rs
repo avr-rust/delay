@@ -28,7 +28,10 @@ pub fn delay(count: u32) {
 /// compile time, otherwise the delay may be much longer than specified.
 #[inline(always)]
 pub fn delay_ms(ms: u32) {
-    let ticks: u64 = (u64::from(avr_config::CPU_FREQUENCY_HZ) * u64::from(ms)) / 4_000;
+    const GCD: u32 = gcd(avr_config::CPU_FREQUENCY_HZ, 4_000);
+    const NUMERATOR: u32 = avr_config::CPU_FREQUENCY_HZ / GCD;
+    const DENOMINATOR: u32 = 4_000 / GCD;
+    let ticks: u64 = (u64::from(ms) * u64::from(NUMERATOR)) / u64::from(DENOMINATOR);
     delay_impl::delay_count_48(ticks);
 }
 
@@ -38,6 +41,16 @@ pub fn delay_ms(ms: u32) {
 /// compile time, otherwise the delay may be much longer than specified.
 #[inline(always)]
 pub fn delay_us(us: u32) {
-    let ticks: u64 = (u64::from(avr_config::CPU_FREQUENCY_HZ) * u64::from(us)) / 4_000_000;
+    const GCD: u32 = gcd(avr_config::CPU_FREQUENCY_HZ, 4_000_000);
+    const NUMERATOR: u32 = avr_config::CPU_FREQUENCY_HZ / GCD;
+    const DENOMINATOR: u32 = 4_000_000 / GCD;
+    let ticks: u64 = (u64::from(us) * u64::from(NUMERATOR)) / u64::from(DENOMINATOR);
     delay_impl::delay_count_48(ticks);
+}
+
+const fn gcd(mut a: u32, mut b: u32) -> u32 {
+    while b != 0 {
+        (a, b) = (b, a % b);
+    }
+    return a;
 }
