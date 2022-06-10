@@ -19,4 +19,4 @@ WORKDIR /code/delay
 
 ENV AVR_CPU_FREQUENCY_HZ=16000000
 
-CMD ["cargo", "build", "-Z", "build-std=core", "--target", "avr-atmega328p.json", "--release"]
+CMD ["cargo", "build", "-Z", "build-std=core", "--target", "avr-unknown-gnu-atmega328", "--release"]
