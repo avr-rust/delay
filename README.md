@@ -15,7 +15,7 @@ Example:
 
 ```bash
 export AVR_CPU_FREQUENCY_HZ=16000000
-cargo build -Z build-std=core --target avr-atmega328p.json --release
+cargo build -Z build-std=core --target avr-unknown-gnu-atmega328 --release
 ```
 
 ```rust
@@ -83,7 +83,7 @@ pub mod std {
     #[no_mangle]
     pub unsafe extern "C" fn rust_eh_personality(_state: (), _exception_object: *mut (), _context: *mut ()) -> () {
     }
-    
+
     #[lang = "panic_fmt"]
     #[unwind]
     pub extern fn rust_begin_panic(_msg: (), _file: &'static str, _line: u32) -> ! {
