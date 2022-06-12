@@ -19,10 +19,10 @@ cargo build -Z build-std=core --target avr-atmega328p.json --release
 ## API
 
 ```rust
-delay_cycles<const CYCLES: u64>()
-delay_us<const US: u64>()
-delay_ms<const MS: u64>()
-delay_sec<const SEC: u64>()
+delay_cycles::<const CYCLES: u64>()
+delay_us::<const US: u64>()
+delay_ms::<const MS: u64>()
+delay_sec::<const SEC: u64>()
 ```
 
 `delay_cycles` accepts 0 to 25_769_803_784 cycles (almost 18 minutes at 24Mhz).
@@ -30,7 +30,7 @@ delay_sec<const SEC: u64>()
 The other functions convert time to cycles by using CPU_FREQUENCY_HZ.
 
 ```rust
-delay_ms<42>(); // delay by 42ms (exactly 1_008_000 cycles at 24Mhz).
+delay_ms::<42>(); // delay by 42ms (exactly 1_008_000 cycles at 24Mhz).
 ```
 
 ## Example
@@ -72,7 +72,7 @@ pub extern fn main() {
     loop {
         out = out ^ 0xff;
         unsafe { write_volatile(PORTB, out) }
-        delay_ms<1000000>();
+        delay_ms::<1000000>();
     }
 }
 
