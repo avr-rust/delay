@@ -1,73 +1,40 @@
-#![feature(asm_experimental_arch)]
-
-#![no_std]
-
 #![crate_name = "avr_delay"]
+#![no_std]
+#![feature(asm_experimental_arch)]
+#![feature(asm_const)]
 
-use core::arch::asm;
+mod delay_cycles;
 
-/// This library is intended to provide a busy-wait delay
-/// similar to the one provided by the arduino c++ utilities
-/// If you need accurate time keeping you should consider a
-/// hardware timer.
+use delay_cycles::Delayer;
 
-// This library does all of the busy-wait loop in rust.
-// We pack as much of the looping as possible into asm!
-// so that we can count cycles.
-//
-// Ignoring the overhead, which may be significant:
-// An arduino runs at 16MHZ. Each asm loop is 4 cycles.
-// so each loop is 0.25 us.
-//
-// the overhead of delay() seems to be about 13 cycles
-// initially, and then 11 cycles per outer loop. We ignore
-// all that.
-
-/// Internal function to implement a variable busy-wait loop.
-/// # Arguments
-/// * 'count' - a u64, the number of times to cycle the loop.
+/// Delay by the exact number of CYCLES.
+/// The number of instructions generated goes up to 11. The higher the number of cycles, the higher
+/// number of instructions, in a staircase effect.
+/// Accepts 0 to 25_769_803_784 cycles (almost 18 minutes at 24Mhz).
 #[inline(always)]
-pub fn delay(count: u64) {
-    // Our asm busy-wait takes a 16 bit word as an argument,
-    // so the max number of loops is 2^16
-    let outer_count = count / 65536;
-    let last_count = ((count % 65536)+1) as u16;
-    for _ in 0..outer_count {
-        // Each loop through should be 4 cycles.
-        let zero = 0u16;
-        unsafe {
-            asm!("1: sbiw {i}, 1",
-                 "brne 1b",
-                 i = inout(reg_iw) zero => _,
-            )
-        }
-    }
-    unsafe {
-        asm!("1: sbiw {i}, 1",
-             "brne 1b",
-             i = inout(reg_iw) last_count => _,
-        )
-    }
+pub fn delay_cycles<const CYCLES: u64>() {
+    Delayer::<CYCLES, 1, 1>::delay_impl()
 }
 
-///delay for N milliseconds
-/// # Arguments
-/// * 'ms' - an u64, number of milliseconds to busy-wait
+/// Maximum value is (25_769_803_784 * 1_000_000 / CPU_FREQUENCY_HZ).
+/// Almost 18 minutes at 24Mhz.
 #[inline(always)]
-pub fn delay_ms(ms: u64) {
-    // microseconds
-    let us = ms * 1000;
-    delay_us(us);
+pub fn delay_us<const US: u64>() {
+    Delayer::<US, {avr_config::CPU_FREQUENCY_HZ as u64}, 1_000_000>::delay_impl()
 }
 
-///delay for N microseconds
-/// # Arguments
-/// * 'us' - an u64, number of microseconds to busy-wait
+/// Maximum value is (25_769_803_784 * 1_000 / CPU_FREQUENCY_HZ).
+/// Almost 18 minutes at 24Mhz.
 #[inline(always)]
-pub fn delay_us(us: u64) {
-    let us_in_loop = (avr_config::CPU_FREQUENCY_HZ / 1000000 / 4) as u64;
-    let loops = us * us_in_loop;
-    delay(loops);
+pub fn delay_ms<const MS: u64>() {
+    Delayer::<MS, {avr_config::CPU_FREQUENCY_HZ as u64}, 1_000>::delay_impl()
+}
+
+/// Maximum value is (25_769_803_784 * 1 / CPU_FREQUENCY_HZ).
+/// Almost 18 minutes at 24Mhz.
+#[inline(always)]
+pub fn delay_sec<const SEC: u64>() {
+    Delayer::<SEC, {avr_config::CPU_FREQUENCY_HZ as u64}, 1>::delay_impl()
 }
 
 #[cfg(test)]
@@ -77,4 +44,3 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 }
-

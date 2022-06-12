@@ -5,36 +5,35 @@
 
 [API Documentation](https://docs.rs/avr_delay/)
 
-The intent of this library is to provide avr specific delay routines similar to the ones provided by the arduino library. The public functions are:
+The intent of this library is to provide avr specific delay routines similar to the ones provided by the arduino library.
 
 ## `$AVR_CPU_FREQUENCY_HZ`
 
 This crate uses the [`avr-config`](https://crates.io/crates/avr-config) crate for fetching the CPU frequency. As such, the `AVR_CPU_FREQUENCY_HZ` environment variable will need to be set when compiling your crate for AVR.
-
-Example:
 
 ```bash
 export AVR_CPU_FREQUENCY_HZ=16000000
 cargo build -Z build-std=core --target avr-atmega328p.json --release
 ```
 
-```rust
-delay(count: u32)
-```
-
-is a raw delay loop. Each loop is 4 cycles. The asm section can loop 65536 times. Initial overhead is about 13 cycles. Each outer loop has an overhead of about 11 cycles.
+## API
 
 ```rust
-delay_us(us: u32)
+delay_cycles<const CYCLES: u64>()
+delay_us<const US: u64>()
+delay_ms<const MS: u64>()
+delay_sec<const SEC: u64>()
 ```
 
-delay _us_ microseconds
+`delay_cycles` accepts 0 to 25_769_803_784 cycles (almost 18 minutes at 24Mhz).
+
+The other functions convert time to cycles by using CPU_FREQUENCY_HZ.
 
 ```rust
-delay_ms(ms: u32)
+delay_ms<42>(); // delay by 42ms (exactly 1_008_000 cycles at 24Mhz).
 ```
 
-delay _ms_ milliseconds
+## Example
 
 A simple example of how to use it follows.
 
@@ -64,7 +63,7 @@ extern crate avr_delay;
 
 use arduino::{DDRB, PORTB};
 use core::ptr::write_volatile;
-use avr_delay::{delay, delay_ms, delay_us};
+use avr_delay::delay_ms;
 
 #[no_mangle]
 pub extern fn main() {
@@ -73,7 +72,7 @@ pub extern fn main() {
     loop {
         out = out ^ 0xff;
         unsafe { write_volatile(PORTB, out) }
-        delay_ms(1000000);
+        delay_ms<1000000>();
     }
 }
 
