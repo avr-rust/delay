@@ -1,0 +1,5 @@
+[unstable]
+build-std = [ "core" ]
+
+[build]
+target = "avr-unknown-gnu-atmega328"
