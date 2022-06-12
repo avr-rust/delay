@@ -16,11 +16,25 @@ pub fn delay_cycles<const CYCLES: u64>() {
     Delayer::<CYCLES, 1, 1>::delay_impl()
 }
 
+#[macro_export]
+macro_rules! delay_cycles {
+    ($t:expr) => {
+        $crate::delay_cycles::<{ $t }>()
+    };
+}
+
 /// Maximum value is (25_769_803_784 * 1_000_000 / CPU_FREQUENCY_HZ).
 /// Almost 18 minutes at 24Mhz.
 #[inline(always)]
 pub fn delay_us<const US: u64>() {
     Delayer::<US, {avr_config::CPU_FREQUENCY_HZ as u64}, 1_000_000>::delay_impl()
+}
+
+#[macro_export]
+macro_rules! delay_us {
+    ($t:expr) => {
+        $crate::delay_us::<{ $t }>()
+    };
 }
 
 /// Maximum value is (25_769_803_784 * 1_000 / CPU_FREQUENCY_HZ).
@@ -30,11 +44,25 @@ pub fn delay_ms<const MS: u64>() {
     Delayer::<MS, {avr_config::CPU_FREQUENCY_HZ as u64}, 1_000>::delay_impl()
 }
 
+#[macro_export]
+macro_rules! delay_ms {
+    ($t:expr) => {
+        $crate::delay_ms::<{ $t }>()
+    };
+}
+
 /// Maximum value is (25_769_803_784 * 1 / CPU_FREQUENCY_HZ).
 /// Almost 18 minutes at 24Mhz.
 #[inline(always)]
 pub fn delay_sec<const SEC: u64>() {
     Delayer::<SEC, {avr_config::CPU_FREQUENCY_HZ as u64}, 1>::delay_impl()
+}
+
+#[macro_export]
+macro_rules! delay_sec {
+    ($t:expr) => {
+        $crate::delay_sec::<{ $t }>()
+    };
 }
 
 #[cfg(test)]
