@@ -2,7 +2,7 @@
 #![no_std]
 #![crate_name = "avr_delay"]
 
-use core::arch::asm;
+mod delay_impl;
 
 /// This library is intended to provide a busy-wait delay
 /// similar to the one provided by the arduino c++ utilities
@@ -12,60 +12,47 @@ use core::arch::asm;
 // This library does all of the busy-wait loop in rust.
 // We pack as much of the looping as possible into asm!
 // so that we can count cycles.
-//
-// Ignoring the overhead, which may be significant:
-// An arduino runs at 16MHZ. Each asm loop is 4 cycles.
-// so each loop is 0.25 us.
-//
-// the overhead of delay() seems to be about 13 cycles
-// initially, and then 11 cycles per outer loop. We ignore
-// all that.
 
-/// Internal function to implement a variable busy-wait loop.
+/// Internal function to implement a variable busy-wait loop. Even if count isn't
+/// known at compile time, this function shouldn't have too much overhead.
 /// # Arguments
-/// * 'count' - a u64, the number of times to cycle the loop.
+/// * 'count' - an u32, the number of times to cycle the loop.
 #[inline(always)]
-pub fn delay(count: u64) {
-    // Our asm busy-wait takes a 16 bit word as an argument,
-    // so the max number of loops is 2^16
-    let outer_count = count / 65536;
-    let last_count = ((count % 65536) + 1) as u16;
-    for _ in 0..outer_count {
-        // Each loop through should be 4 cycles.
-        let zero = 0u16;
-        unsafe {
-            asm!("1: sbiw {i}, 1",
-                 "brne 1b",
-                 i = inout(reg_iw) zero => _,
-            )
-        }
-    }
-    unsafe {
-        asm!("1: sbiw {i}, 1",
-             "brne 1b",
-             i = inout(reg_iw) last_count => _,
-        )
-    }
+pub fn delay(count: u32) {
+    delay_impl::delay_count_32(count);
 }
 
 ///delay for N milliseconds
 /// # Arguments
-/// * 'ms' - an u64, number of milliseconds to busy-wait
+/// * 'ms' - an u32, number of milliseconds to busy-wait. This should be known at
+/// compile time, otherwise the delay may be much longer than specified.
 #[inline(always)]
-pub fn delay_ms(ms: u64) {
-    // microseconds
-    let us = ms * 1000;
-    delay_us(us);
+pub fn delay_ms(ms: u32) {
+    const GCD: u32 = gcd(avr_config::CPU_FREQUENCY_HZ, 4_000);
+    const NUMERATOR: u32 = avr_config::CPU_FREQUENCY_HZ / GCD;
+    const DENOMINATOR: u32 = 4_000 / GCD;
+    let ticks: u64 = (u64::from(ms) * u64::from(NUMERATOR)) / u64::from(DENOMINATOR);
+    delay_impl::delay_count_48(ticks);
 }
 
 ///delay for N microseconds
 /// # Arguments
-/// * 'us' - an u64, number of microseconds to busy-wait
+/// * 'ms' - an u32, number of microseconds to busy-wait. This should be known at
+/// compile time, otherwise the delay may be much longer than specified.
 #[inline(always)]
-pub fn delay_us(us: u64) {
-    let us_in_loop = (avr_config::CPU_FREQUENCY_HZ / 1000000 / 4) as u64;
-    let loops = us * us_in_loop;
-    delay(loops);
+pub fn delay_us(us: u32) {
+    const GCD: u32 = gcd(avr_config::CPU_FREQUENCY_HZ, 4_000_000);
+    const NUMERATOR: u32 = avr_config::CPU_FREQUENCY_HZ / GCD;
+    const DENOMINATOR: u32 = 4_000_000 / GCD;
+    let ticks: u64 = (u64::from(us) * u64::from(NUMERATOR)) / u64::from(DENOMINATOR);
+    delay_impl::delay_count_48(ticks);
+}
+
+const fn gcd(mut a: u32, mut b: u32) -> u32 {
+    while b != 0 {
+        (a, b) = (b, a % b);
+    }
+    return a;
 }
 
 #[cfg(test)]
