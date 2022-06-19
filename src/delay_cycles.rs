@@ -72,6 +72,19 @@ struct Selection {
     remainder: u64,
 }
 
+// Compute the intended number of cycles to delay, and panic if it is greater than
+// the maximum supported amount of cycles
+const fn compute_total_cycles(cycles: u64, mul: u64, div: u64) -> u64 {
+    const MAX_SUPPORTED_CYCLES: u64 = 25_769_803_784;
+    
+    // Multiply first to avoid precision loss, and expand to u128 to avoid overflow
+    let result: u128 = (cycles as u128) * (mul as u128) / (div as u128);
+    if result > (MAX_SUPPORTED_CYCLES as u128) {
+        panic!("Error: Tried to delay for too many cycles. The maximum supported delay is 25_769_803_784 cycles");
+    }
+    return result as u64;
+}
+
 const fn cycles(counter_mask: u64, cycles_per_run: u64, cycles_per_iter: u64) -> Cycles {
     Cycles {
         counter_mask,
@@ -103,11 +116,7 @@ const fn select(info: Cycles, cycles: u64, above: u64) -> Selection {
 }
 
 impl<const CYCLES: u64, const MUL: u64, const DIV: u64> Delayer<CYCLES, MUL, DIV> {
-    // Multiply first to avoid precision loss.
-    // With a u64 there is no overflow when MUL is lower than:
-    //  (2^64-1)/25_769_803_784 == 715_827_882.
-    // Since MUL is usually CPU_FREQUENCY_HZ, this allows up to 715.83 MHz.
-    const TOTAL_CYCLES: u64 = CYCLES * MUL / DIV;
+    const TOTAL_CYCLES: u64 = compute_total_cycles(CYCLES, MUL, DIV);
 
     // With `feature(generic_const_exprs) it becomes possible to construct a static assertion.
     //const _: [(); 0 - ((Self::TOTAL_CYCLES > 25_769_803_784) as usize)] = [];
