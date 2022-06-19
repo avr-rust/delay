@@ -3,8 +3,10 @@
 #![feature(asm_experimental_arch)]
 #![feature(asm_const)]
 
+#[cfg(target_arch = "avr")]
 mod delay_cycles;
 
+#[cfg(target_arch = "avr")]
 use delay_cycles::Delayer;
 
 /// Delay by the exact number of CYCLES.
@@ -13,6 +15,7 @@ use delay_cycles::Delayer;
 /// Accepts 0 to 25_769_803_784 cycles (almost 18 minutes at 24Mhz).
 #[inline(always)]
 pub fn delay_cycles<const CYCLES: u64>() {
+    #[cfg(target_arch = "avr")]
     Delayer::<CYCLES, 1, 1>::delay_impl()
 }
 
@@ -20,6 +23,7 @@ pub fn delay_cycles<const CYCLES: u64>() {
 /// Almost 18 minutes at 24Mhz.
 #[inline(always)]
 pub fn delay_us<const US: u64>() {
+    #[cfg(target_arch = "avr")]
     Delayer::<US, {avr_config::CPU_FREQUENCY_HZ as u64}, 1_000_000>::delay_impl()
 }
 
@@ -27,6 +31,7 @@ pub fn delay_us<const US: u64>() {
 /// Almost 18 minutes at 24Mhz.
 #[inline(always)]
 pub fn delay_ms<const MS: u64>() {
+    #[cfg(target_arch = "avr")]
     Delayer::<MS, {avr_config::CPU_FREQUENCY_HZ as u64}, 1_000>::delay_impl()
 }
 
@@ -34,6 +39,7 @@ pub fn delay_ms<const MS: u64>() {
 /// Almost 18 minutes at 24Mhz.
 #[inline(always)]
 pub fn delay_sec<const SEC: u64>() {
+    #[cfg(target_arch = "avr")]
     Delayer::<SEC, {avr_config::CPU_FREQUENCY_HZ as u64}, 1>::delay_impl()
 }
 
