@@ -245,7 +245,10 @@ impl<const CYCLES: u64, const MUL: u64, const DIV: u64> Delayer<CYCLES, MUL, DIV
     /// 2 cycles per run.
     #[inline(always)]
     fn delay_2cycles() {
-        unsafe { asm!("rjmp .", options(nomem, nostack, preserves_flags),) }
+        unsafe { asm!(
+            "rjmp 1f",
+            "1:",
+            options(nomem, nostack, preserves_flags),) }
     }
 
     /// 1 instruction.
